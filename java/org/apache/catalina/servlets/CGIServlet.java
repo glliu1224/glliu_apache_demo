@@ -349,6 +349,11 @@ public final class CGIServlet extends HttpServlet {
      *                                  interferes with the servlet's normal
      *                                  operation
      */
+    /**
+     * 设置实例变量
+     * @param config ServletConfig对象，包含servlet的配置和初始化参数
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
 
@@ -1410,6 +1415,9 @@ public final class CGIServlet extends HttpServlet {
      * The input and output streams can be set by the <code>setInput</code>
      * and <code>setResponse</code> methods, respectively.
      * </p>
+     */
+    /**
+     * 在给定脚本所需的环境和（可选）输入/输出流
      */
     protected class CGIRunner {
 

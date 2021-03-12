@@ -114,17 +114,21 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     /**
      * The naming context listener for this web application.
+     * WEB应用程序的上下文监听器
+     *
      */
     private final NamingContextListener namingContextListener;
 
 
     /**
      * The port number on which we wait for shutdown commands.
+     *等待关机命令的端口
      */
     private int port = 8005;
 
     /**
      * The address on which we wait for shutdown commands.
+     * 等待关机命令的地址
      */
     private String address = "localhost";
 
@@ -138,6 +142,7 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     /**
      * The set of Services associated with this Server.
+     * 服务器关联的服务集
      */
     private Service services[] = new Service[0];
     private final Object servicesLock = new Object();
@@ -158,6 +163,7 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
 
     /**
      * The property change support for this component.
+     * 此组件的属性更改支持
      */
     final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
