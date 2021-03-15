@@ -556,6 +556,15 @@ public final class Request {
      * @deprecated Unused. Will be removed in Tomcat 9. Use
      *             {@link #doRead(ApplicationBufferHandler)}
      */
+    /**
+     * 从输入缓冲区读取数据并将其放入到一个字节块中
+     *缓冲区协议实现所有-它将在下次读取上
+     * 如果需要使用，适配器必须就地处理数据或赋值数据，可以将它放到一个单独的缓冲区，在大多数情况下这是在字节-字符转换期间或通过
+     * InputStream完成，不像InputStream，这个接口允许应用程序就地处理数据，没有副本
+     * @param chunk
+     * @return
+     * @throws IOException
+     */
     @Deprecated
     public int doRead(ByteChunk chunk) throws IOException {
         int n = inputBuffer.doRead(chunk);

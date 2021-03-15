@@ -43,6 +43,13 @@ public interface InputBuffer {
      * @deprecated Unused. Will be removed in Tomcat 9. Use
      *             {@link #doRead(ApplicationBufferHandler)}
      */
+    /**
+     * 从输入流读入给定的缓冲区
+     * 重要提示:当前模型假设协议将拥有缓冲区，并在ByteChunk中返回指向它的指针，
+     * @param chunk
+     * @return
+     * @throws IOException
+     */
     @Deprecated
     public int doRead(ByteChunk chunk) throws IOException;
 

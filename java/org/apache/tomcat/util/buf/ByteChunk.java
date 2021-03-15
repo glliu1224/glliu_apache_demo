@@ -193,6 +193,12 @@ public final class ByteChunk extends AbstractChunk {
      * @param off the start offset of the bytes
      * @param len the length of the bytes
      */
+    /**
+     * 将缓冲区设置为指定的字节数组
+     * @param b
+     * @param off
+     * @param len
+     */
     public void setBytes(byte[] b, int off, int len) {
         buff = b;
         start = off;

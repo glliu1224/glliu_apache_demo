@@ -33,6 +33,10 @@ import org.apache.tomcat.util.res.StringManager;
  *
  * @author Remy Maucherat
  */
+
+/**
+ * Servlet在读取tomcat中的请求时，在读取请求体时，如果没有指定Content-Length,在解析请求体时，将会调用此类的doRead(ByteChunk chunk)方法解析请求体
+ */
 public class IdentityInputFilter implements InputFilter, ApplicationBufferHandler {
 
     private static final StringManager sm = StringManager.getManager(
@@ -109,6 +113,13 @@ public class IdentityInputFilter implements InputFilter, ApplicationBufferHandle
                     // The chunk is longer than the number of bytes remaining
                     // in the body; changing the chunk length to the number
                     // of bytes remaining
+                    /*块的长度大于正文中剩余的字节数，将区块长度更改为剩余字节数*/
+                    /**
+                     * chunk.getBytes() ByteChunk类中有一个属性是byte[]类型，
+                     * chunk.buff = chunk.getBytes(),
+                     * chunk.start = chunk.getStart()
+                     * chunk.end = remaining
+                     */
                     chunk.setBytes(chunk.getBytes(), chunk.getStart(),
                                    (int) remaining);
                     result = (int) remaining;
