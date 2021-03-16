@@ -73,6 +73,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
         // Upgrade protocols have to be configured first since the endpoint
         // init (triggered via super.init() below) uses this list to configure
         // the list of ALPN protocols to advertise
+        //配置升级协议
         for (UpgradeProtocol upgradeProtocol : upgradeProtocols) {
             configureUpgradeProtocol(upgradeProtocol);
         }
@@ -82,6 +83,7 @@ public abstract class AbstractHttp11Protocol<S> extends AbstractProtocol<S> {
         // Set the Http11Protocol (i.e. this) for any upgrade protocols once
         // this has completed initialisation as the upgrade protocols may expect this
         // to be initialised when the call is made
+        //完成初始化后，设置所有的协议为Http11
         for (UpgradeProtocol upgradeProtocol : upgradeProtocols) {
             if (upgradeProtocol instanceof Http2Protocol) {
                 ((Http2Protocol) upgradeProtocol).setHttp11Protocol(this);

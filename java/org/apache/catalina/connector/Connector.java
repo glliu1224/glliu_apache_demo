@@ -63,6 +63,9 @@ public class Connector extends LifecycleMBeanBase  {
     /**
      * Alternate flag to enable recycling of facades.
      */
+    /**
+     * 启用正面回收的备用标志
+     */
     public static final boolean RECYCLE_FACADES =
         Boolean.parseBoolean(System.getProperty("org.apache.catalina.connector.RECYCLE_FACADES", "false"));
 
@@ -77,20 +80,25 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
+    /*初始化连接器*/
     public Connector(String protocol) {
         setProtocol(protocol);
         // Instantiate protocol handler
         ProtocolHandler p = null;
         try {
+            /*protocolHandlerClassName = "org.apache.coyote.http11.Http11NioProtocol"*/
             Class<?> clazz = Class.forName(protocolHandlerClassName);
+            /*初始化Http11NioProtocol对象*/
             p = (ProtocolHandler) clazz.getConstructor().newInstance();
         } catch (Exception e) {
             log.error(sm.getString(
                     "coyoteConnector.protocolHandlerInstantiationFailed"), e);
         } finally {
+            /*将初始化完成的Http11NioProtocol对象赋值给protocolHandler*/
             this.protocolHandler = p;
         }
 
+        /*设置编码集*/
         if (Globals.STRICT_SERVLET_COMPLIANCE) {
             uriCharset = StandardCharsets.ISO_8859_1;
         } else {
@@ -98,6 +106,7 @@ public class Connector extends LifecycleMBeanBase  {
         }
 
         // Default for Connector depends on this (deprecated) system property
+        /*连接器的默认值取决于此系统属性*/
         if (Boolean.parseBoolean(System.getProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "false"))) {
             encodedSolidusHandling = EncodedSolidusHandling.DECODE;
         }
@@ -110,36 +119,42 @@ public class Connector extends LifecycleMBeanBase  {
     /**
      * The <code>Service</code> we are associated with (if any).
      */
+    /*与我们相关联的service 一个Connector中有一个service*/
     protected Service service = null;
 
 
     /**
      * Do we allow TRACE ?
      */
+    /*是否允许追踪，默认false*/
     protected boolean allowTrace = false;
 
 
     /**
      * Default timeout for asynchronous requests (ms).
      */
+    /*异步请求的默认超时时间，单位毫秒*/
     protected long asyncTimeout = 30000;
 
 
     /**
      * The "enable DNS lookups" flag for this Connector.
      */
+    /*此链接器的启用DNS查找标志*/
     protected boolean enableLookups = false;
 
 
     /**
      * Is generation of X-Powered-By response header enabled/disabled?
      */
+    /*X-Powered-By响应头的生成是否已经禁用*/
     protected boolean xpoweredBy = false;
 
 
     /**
      * The port number on which we listen for requests.
      */
+    /*我们当前请求监听端口*/
     protected int port = -1;
 
 
@@ -148,6 +163,10 @@ public class Connector extends LifecycleMBeanBase  {
      * were directed.  This is useful when operating Tomcat behind a proxy
      * server, so that redirects get constructed accurately.  If not specified,
      * the server name included in the <code>Host</code> header is used.
+     */
+    /**
+     * 我们应该假装对此连接器的请求已定向到的服务器名称，在代理服务器后面操作Tomcat时，
+     * 这很有用，这样可以准确地构造重定向。如果没有特别声明，使用Host头中包含的服务器名称
      */
     protected String proxyName = null;
 
@@ -168,12 +187,17 @@ public class Connector extends LifecycleMBeanBase  {
      * manager is enabled, this setting is ignored and object facades are
      * always discarded.
      */
+    /**
+     * 控制请求处理对象的外观回收标志，如果设置为true，facades对象在请求被回收的时候将会被丢弃掉，
+     * 如果启用了安全管理器，则忽略处设置并且始终facades对象
+     */
     protected boolean discardFacades = RECYCLE_FACADES;
 
 
     /**
      * The redirect port for non-SSL to SSL redirects.
      */
+    /*非SSL向SSL重定向的重定向端口*/
     protected int redirectPort = 443;
 
 
@@ -181,6 +205,7 @@ public class Connector extends LifecycleMBeanBase  {
      * The request scheme that will be set on all requests received
      * through this connector.
      */
+    /*将通过此连接器接受的所有请求设置为http*/
     protected String scheme = "http";
 
 
@@ -188,6 +213,7 @@ public class Connector extends LifecycleMBeanBase  {
      * The secure connection flag that will be set on all requests received
      * through this connector.
      */
+    /*通过此连接器接收的所有请求都会被设置为此安全标志*/
     protected boolean secure = false;
 
 
@@ -201,6 +227,7 @@ public class Connector extends LifecycleMBeanBase  {
      * The maximum number of cookies permitted for a request. Use a value less
      * than zero for no limit. Defaults to 200.
      */
+    /*请求允许的最大cookie数，使用小于0的值表示无限制，默认是200*/
     private int maxCookieCount = 200;
 
     /**
@@ -208,12 +235,14 @@ public class Connector extends LifecycleMBeanBase  {
      * automatically parsed by the container. 10000 by default. A value of less
      * than 0 means no limit.
      */
+    /*容器将自动分析的最大参数数，默认是10000,小于0表示无限制*/
     protected int maxParameterCount = 10000;
 
     /**
      * Maximum size of a POST which will be automatically parsed by the
      * container. 2MB by default.
      */
+    /*容器自动解析的POST请求的大小，默认2M*/
     protected int maxPostSize = 2 * 1024 * 1024;
 
 
@@ -251,6 +280,7 @@ public class Connector extends LifecycleMBeanBase  {
 
     /**
      * Coyote protocol handler.
+     * 负责根据具体的协议和I/O模型接收请求数据，解析并处理，然后创建并委托EndPoint进行具体的处理
      */
     protected final ProtocolHandler protocolHandler;
 
@@ -964,6 +994,7 @@ public class Connector extends LifecycleMBeanBase  {
      */
     public Request createRequest() {
 
+        //org.apache.catalina.connector.Request
         Request request = new Request();
         request.setConnector(this);
         return (request);
@@ -1038,13 +1069,20 @@ public class Connector extends LifecycleMBeanBase  {
     }
 
 
+    /**
+     * 初始化Connector内部的一些属性，初始化适配器、协议处理器、为协议处理器设置协议Http11
+     * @throws LifecycleException
+     */
     @Override
     protected void initInternal() throws LifecycleException {
 
+        /*调用父类初始化方法*/
         super.initInternal();
 
         // Initialize adapter
+        //初始化适配器
         adapter = new CoyoteAdapter(this);
+        //为当前协议处理器设置适配器
         protocolHandler.setAdapter(adapter);
 
         // Make sure parseBodyMethodsSet has a default
@@ -1052,6 +1090,7 @@ public class Connector extends LifecycleMBeanBase  {
             setParseBodyMethods(getParseBodyMethods());
         }
 
+        /*进行一系列判断start*/
         if (protocolHandler.isAprRequired() && !AprLifecycleListener.isInstanceCreated()) {
             throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprListener",
                     getProtocolHandlerClassName()));
@@ -1060,6 +1099,8 @@ public class Connector extends LifecycleMBeanBase  {
             throw new LifecycleException(sm.getString("coyoteConnector.protocolHandlerNoAprLibrary",
                     getProtocolHandlerClassName()));
         }
+        /*进行一系列判断end*/
+
         if (AprLifecycleListener.isAprAvailable() && AprLifecycleListener.getUseOpenSSL() &&
                 protocolHandler instanceof AbstractHttp11JsseProtocol) {
             AbstractHttp11JsseProtocol<?> jsseProtocolHandler =
@@ -1072,6 +1113,7 @@ public class Connector extends LifecycleMBeanBase  {
         }
 
         try {
+            /*初始化协议处理器，将所有的协议设置为Http11*/
             protocolHandler.init();
         } catch (Exception e) {
             throw new LifecycleException(

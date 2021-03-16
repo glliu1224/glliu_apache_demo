@@ -31,10 +31,16 @@ import org.apache.tomcat.util.net.SSLHostConfig;
  * @author Costin Manolache
  * @see Adapter
  */
+
+/**
+ * 抽象协议的实现，包括线程等
+ * 这是有coyote协议实现的主要接口，Adapter是coyoteServlet容器要实现的主接口
+ */
 public interface ProtocolHandler {
 
     /**
      * Return the adapter associated with the protocol handler.
+     * 返回protocol handler 关联的adapter
      * @return the adapter
      */
     public Adapter getAdapter();
@@ -42,7 +48,7 @@ public interface ProtocolHandler {
 
     /**
      * The adapter, used to call the connector.
-     *
+     * 适配器，用来连接connector
      * @param adapter The adapter to associate
      */
     public void setAdapter(Adapter adapter);
@@ -50,7 +56,7 @@ public interface ProtocolHandler {
 
     /**
      * The executor, provide access to the underlying thread pool.
-     *
+     * 提供对底层线程池的访问
      * @return The executor used to process requests
      */
     public Executor getExecutor();

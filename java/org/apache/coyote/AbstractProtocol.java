@@ -54,10 +54,12 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
      */
     private static final StringManager sm = StringManager.getManager(AbstractProtocol.class);
 
-
     /**
      * Counter used to generate unique JMX names for connectors using automatic
      * port binding.
+     */
+    /**
+     * 用于使用自动端口绑定为连接器生成唯一JMX名称的计数器
      */
     private static final AtomicInteger nameCounter = new AtomicInteger(0);
 
@@ -74,6 +76,9 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
      * Endpoint that provides low-level network I/O - must be matched to the
      * ProtocolHandler implementation (ProtocolHandler using NIO, requires NIO
      * Endpoint etc.).
+     */
+    /**
+     * 提供低级网络I/O的端点必须与ProtocolHandler实现匹配
      */
     private final AbstractEndpoint<S> endpoint;
 
@@ -731,6 +736,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                 getLog().debug(sm.getString("abstractConnectionHandler.process",
                         wrapper.getSocket(), status));
             }
+            /*socket连接被关闭*/
             if (wrapper == null) {
                 // Nothing to do. Socket has been closed.
                 return SocketState.CLOSED;
@@ -748,6 +754,10 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
             // dispatched. Because of delays in the dispatch process, the
             // timeout may no longer be required. Check here and avoid
             // unnecessary processing.
+            /**
+             * 超时是在专用线程上计算的，然后被调度，由于调度过程中的延迟，可能不再需要超时
+             * 检查这里，避免不必要的处理
+             */
             if (SocketEvent.TIMEOUT == status &&
                     (processor == null ||
                     !processor.isAsync() && !processor.isUpgrade() ||
@@ -758,10 +768,12 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
 
             if (processor != null) {
                 // Make sure an async timeout doesn't fire
+                /*确定没有触发异步超时*/
                 getProtocol().removeWaitingProcessor(processor);
             } else if (status == SocketEvent.DISCONNECT || status == SocketEvent.ERROR) {
                 // Nothing to do. Endpoint requested a close and there is no
                 // longer a processor associated with this socket.
+                /*没有东西处理，EndPoint请求关闭，并且不再有与此套接字关联的处理器*/
                 return SocketState.CLOSED;
             }
 
@@ -813,6 +825,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                     }
                 }
                 if (processor == null) {
+                    /*初始化processor，并且将adapter和EndPoint与此processor关联起来*/
                     processor = getProtocol().createProcessor();
                     register(processor);
                     if (getLog().isDebugEnabled()) {
@@ -824,6 +837,7 @@ public abstract class AbstractProtocol<S> implements ProtocolHandler,
                         wrapper.getSslSupport(getProtocol().getClientCertProvider()));
 
                 // Associate the processor with the connection
+                /*将processor与此连接关联起来*/
                 connections.put(socket, processor);
 
                 SocketState state = SocketState.CLOSED;

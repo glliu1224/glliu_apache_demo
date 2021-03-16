@@ -117,6 +117,10 @@ public abstract class SocketWrapperBase<E> {
         return socket;
     }
 
+    /**
+     * 返回使用socket接口读取数据的endPoint
+     * @return
+     */
     public AbstractEndpoint<E> getEndpoint() {
         return endpoint;
     }

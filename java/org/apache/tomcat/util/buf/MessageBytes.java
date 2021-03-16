@@ -34,6 +34,11 @@ import java.util.Locale;
  * @author James Todd [gonzo@eng.sun.com]
  * @author Costin Manolache
  */
+
+/**
+ * 此类用于表示HTTP消息中的字节子数组，表示所有的请求/响应元素，字节/字符转换被延迟并缓存，一切都是可回收的，
+ * 对象可以表示byte[]、char[]、或字符串
+ */
 public final class MessageBytes implements Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -41,6 +46,9 @@ public final class MessageBytes implements Cloneable, Serializable {
     private int type = T_NULL;
 
     public static final int T_NULL = 0;
+    /**
+     * 如果对象用于创建MessageBytes的String，T_TR
+     */
     /** getType() is T_STR if the the object used to create the MessageBytes
         was a String */
     public static final int T_STR  = 1;
@@ -70,6 +78,7 @@ public final class MessageBytes implements Cloneable, Serializable {
      * Use static newInstance() in order to allow
      *   future hooks.
      */
+    /*私有化构造方法*/
     private MessageBytes() {
     }
 
@@ -77,6 +86,7 @@ public final class MessageBytes implements Cloneable, Serializable {
      * Construct a new MessageBytes instance.
      * @return the instance
      */
+    /*工厂模式，此处没有用到单例模式，每次调用newInstance还是会返回一个新的对象*/
     public static MessageBytes newInstance() {
         return factory.newInstance();
     }
@@ -92,6 +102,9 @@ public final class MessageBytes implements Cloneable, Serializable {
 
     /**
      * Resets the message bytes to an uninitialized (NULL) state.
+     */
+    /**
+     * 将消息字节重置为未初始化状态
      */
     public void recycle() {
         type=T_NULL;
@@ -165,6 +178,9 @@ public final class MessageBytes implements Cloneable, Serializable {
             return strValue;
         }
 
+        /**
+         * toString方法将字节数组或char数组转字符串
+         */
         switch (type) {
         case T_CHARS:
             strValue = charC.toString();

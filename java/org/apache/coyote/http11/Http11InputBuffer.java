@@ -39,6 +39,10 @@ import org.apache.tomcat.util.res.StringManager;
  * InputBuffer for HTTP that provides request header parsing as well as transfer
  * encoding.
  */
+
+/**
+ * HTTP的InputBuffer，提供请求头解析和传输编码
+ */
 public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler {
 
     // -------------------------------------------------------------- Constants
@@ -56,12 +60,14 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
 
     /**
      * Associated Coyote request.
+     * org.apache.coyote.Request
      */
     private final Request request;
 
 
     /**
      * Headers of the associated request.
+     * 关联请求的标头
      */
     private final MimeHeaders headers;
 
@@ -69,7 +75,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
     private final boolean rejectIllegalHeader;
 
     /**
-     * State.
+     * State.默认true
      */
     private volatile boolean parsingHeader;
 
@@ -77,11 +83,13 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
     /**
      * Swallow input ? (in the case of an expectation)
      */
+    /*期望状态下，读入请求*/
     private boolean swallowInput;
 
 
     /**
      * The read buffer.
+     * java.nio.ByteBuffer
      */
     private ByteBuffer byteBuffer;
 
@@ -90,17 +98,20 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      * Pos of the end of the header in the buffer, which is also the
      * start of the body.
      */
+    /*缓冲区中请求头结尾的位置，也是请求体开始的位置*/
     private int end;
 
 
     /**
      * Wrapper that provides access to the underlying socket.
      */
+    /*提供对底层套接字的访问的包装器*/
     private SocketWrapperBase<?> wrapper;
 
 
     /**
      * Underlying input buffer.
+     * org.apache.coyote.InputBuffer
      */
     private InputBuffer inputStreamInputBuffer;
 
@@ -109,6 +120,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      * Filter library.
      * Note: Filter[Constants.CHUNKED_FILTER] is always the "chunked" filter.
      */
+    /*过滤器[常量。分块筛选器]始终是分块过滤器*/
     private InputFilter[] filterLibrary;
 
 
@@ -128,8 +140,11 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      * Parsing state - used for non blocking parsing so that
      * when more data arrives, we can pick up where we left off.
      */
+    /*解析状态--用于非阻塞解析，以便当更多数据到达时，我们可以从中断处重新开始*/
     private byte prevChr = 0;
     private byte chr = 0;
+
+    //默认true
     private volatile boolean parsingRequestLine;
     private int parsingRequestLinePhase = 0;
     private boolean parsingRequestLineEol = false;
@@ -143,6 +158,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      * Maximum allowed size of the HTTP request line plus headers plus any
      * leading blank lines.
      */
+    /*HTTP请求航的最大允许大小加上头加上任何空行*/
     private final int headerBufferSize;
 
     /**
@@ -187,6 +203,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      *
      * @throws NullPointerException if the supplied filter is null
      */
+    /*将输入筛选器添加到筛选器库*/
     void addFilter(InputFilter filter) {
 
         if (filter == null) {
@@ -351,6 +368,13 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      *
      * @return true if data is properly fed; false if no data is available
      * immediately and thread should be freed
+     */
+    /**
+     * 读取请求行
+     * 此函数将在HTTP请求头解析期间使用，读取请求体时不会使用
+     * @param keptAlive 是否是长连接
+     * @return
+     * @throws IOException
      */
     boolean parseRequestLine(boolean keptAlive) throws IOException {
 
@@ -762,6 +786,7 @@ public class Http11InputBuffer implements InputBuffer, ApplicationBufferHandler 
      * @return <code>true</code> if more data was added to the input buffer
      *         otherwise <code>false</code>
      */
+    /*尝试将一些数据读入输入缓冲区*/
     private boolean fill(boolean block) throws IOException {
 
         if (log.isDebugEnabled()) {

@@ -43,6 +43,10 @@ import org.apache.tomcat.util.res.StringManager;
  * Provides functionality and attributes common to all supported protocols
  * (currently HTTP and AJP) for processing a single request/response.
  */
+
+/**
+ * 提供所有支持的通用的功能和属性，用于处理单个请求/响应
+ */
 public abstract class AbstractProcessor extends AbstractProcessorLight implements ActionHook {
 
     private static final StringManager sm = StringManager.getManager(AbstractProcessor.class);

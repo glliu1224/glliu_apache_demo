@@ -62,11 +62,19 @@ import org.apache.tomcat.util.res.StringManager;
  * @author Costin Manolache
  * @author Remy Maucherat
  */
+
+/**
+ * 这是一个低级的服务器请求的有效表示，大多数字段是不参与GC的
+ * 昂贵的操作会被延迟，直到用户代码需要信息
+ * 使用狗子机制将处理委托给模块
+ * 这个类不是为用户代码设计的，他在tomcat内部用于以最有效的方式处理请求
+ */
 public final class Request {
 
     private static final StringManager sm = StringManager.getManager(Request.class);
 
     // Expected maximum typical number of cookies per request.
+    //每个请求的cookie的最大典型数量应为
     private static final int INITIAL_COOKIE_SIZE = 4;
 
     // ----------------------------------------------------------- Constructors

@@ -82,6 +82,12 @@ public abstract class AbstractEndpoint<S> {
          *
          * @return The state of the socket after processing
          */
+        /**
+         * 使用给定的状态处理提供的socket
+         * @param socket
+         * @param status
+         * @return
+         */
         public SocketState process(SocketWrapperBase<S> socket,
                 SocketEvent status);
 

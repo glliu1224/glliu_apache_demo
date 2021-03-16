@@ -68,6 +68,14 @@ import org.apache.tomcat.util.net.jsse.JSSESupport;
  * @author Mladen Turk
  * @author Remy Maucherat
  */
+
+/**
+ * NIO定制的线程池，提供以下服务：
+ *socket连接线程
+ * socket轮询器线程
+ * 工作线程池
+ * 在切换到JAVA5时，有机会使用虚拟机的线程池
+ */
 public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
 
 
@@ -91,10 +99,16 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
     /**
      * Stop latch used to wait for poller stop
      */
+    /**
+     * 用于等待轮询器停止的停止锁
+     */
     private volatile CountDownLatch stopLatch = null;
 
     /**
      * Cache for poller events
+     */
+    /**
+     * 轮询器事件的缓存
      */
     private SynchronizedStack<PollerEvent> eventCache;
 
@@ -128,6 +142,9 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
 
     /**
      * Use System.inheritableChannel to obtain channel from stdin/stdout.
+     */
+    /**
+     * 从stdin/stdout利用系统继承通道获取通道
      */
     private boolean useInheritedChannel = false;
     public void setUseInheritedChannel(boolean useInheritedChannel) { this.useInheritedChannel = useInheritedChannel; }
@@ -212,16 +229,25 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
     /**
      * Initialize the endpoint.
      */
+    /**
+     * 初始化endPoint
+     * @throws Exception
+     */
     @Override
     public void bind() throws Exception {
 
+        /*如果没有获取到通道*/
         if (!getUseInheritedChannel()) {
+            /*创建一个server-socket通道，在使用这个通道之前，必须绑定IP和其他的一些配置*/
             serverSock = ServerSocketChannel.open();
+            /*设置一些配置*/
             socketProperties.setProperties(serverSock.socket());
             InetSocketAddress addr = (getAddress()!=null?new InetSocketAddress(getAddress(),getPort()):new InetSocketAddress(getPort()));
+            /*为新获取的通道绑定地址、端口*/
             serverSock.socket().bind(addr,getAcceptCount());
         } else {
             // Retrieve the channel provided by the OS
+            /*检索操作系统提供的通道*/
             Channel ic = System.inheritedChannel();
             if (ic instanceof ServerSocketChannel) {
                 serverSock = (ServerSocketChannel) ic;
@@ -241,9 +267,11 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel> {
             //minimum one poller thread
             pollerThreadCount = 1;
         }
+        /*将初始化的CountDownLatch赋值给stopLatch*/
         setStopLatch(new CountDownLatch(pollerThreadCount));
 
         // Initialize SSL if needed
+        /*初始化SSL*/
         initialiseSsl();
 
         selectorPool.open();

@@ -110,11 +110,17 @@ public class Http11Processor extends AbstractProcessor {
      * Flag used to indicate that the socket should be kept open (e.g. for keep
      * alive or send file.
      */
+    /**
+     * 用于指示套接字应保持打开状态的标志
+     */
     protected boolean openSocket = false;
 
 
     /**
      * Flag that indicates if the request headers have been completely read.
+     */
+    /**
+     * 请求头是否被读取完成的标志
      */
     protected boolean readComplete = true;
 
